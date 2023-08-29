@@ -14,16 +14,12 @@ type Props = {
 function Battlefield({ size, numOfBombs, onUpdate, matchNumber }: Props) {
   const [battlefield, setBattlefield] = useState<any>([]);
 
+  // Genero il battlefield + le bombe per ogni nuovo match
   useEffect(() => {
-    startBattlefield(size, 10);
-  }, [size, matchNumber]);
-
-  // La funzione per inizializzare tutto il Battlefield, mettendo insieme tutti i vari step
-  const startBattlefield = (size: number, numOfBombs: number) => {
     let newBattlefield = generateEmptyBattlefield(size);
     newBattlefield = addBombs(newBattlefield, numOfBombs);
     setBattlefield(newBattlefield);
-  };
+  }, [matchNumber]);
 
   // Genero il campo di battaglia vuoto, senza bombe né vicini
   const generateEmptyBattlefield = (size: number) => {
@@ -37,7 +33,6 @@ function Battlefield({ size, numOfBombs, onUpdate, matchNumber }: Props) {
           isMine: false,
           neighbours: 0,
           isRevealed: false,
-          isEmpty: true,
           isFlagged: false,
         };
       }
@@ -55,14 +50,12 @@ function Battlefield({ size, numOfBombs, onUpdate, matchNumber }: Props) {
 
       if (!newBattlefield[row][col].isMine) {
         newBattlefield[row][col].isMine = true;
-        newBattlefield[row][col].isEmpty = false;
 
         bombsAdded++;
 
         const neighbours = getNeighbours(row, col, newBattlefield);
         for (let i = 0; i < neighbours.length; i++) {
           newBattlefield[neighbours[i].x][neighbours[i].y].neighbours++;
-          newBattlefield[neighbours[i].x][neighbours[i].y].isEmpty = false;
         }
       }
     }
@@ -93,10 +86,10 @@ function Battlefield({ size, numOfBombs, onUpdate, matchNumber }: Props) {
       if (
         !vicino.isFlagged &&
         !vicino.isRevealed &&
-        (vicino.isEmpty || !vicino.isMine)
+        (vicino.neighbours === 0 || !vicino.isMine)
       ) {
         newBattlefield[vicino.x][vicino.y].isRevealed = true;
-        if (vicino.isEmpty) {
+        if (vicino.neighbours === 0) {
           showNearbyEmptyTiles(vicino.x, vicino.y, prevBattlefield);
         }
       }
@@ -116,7 +109,7 @@ function Battlefield({ size, numOfBombs, onUpdate, matchNumber }: Props) {
         revealTile(x, y);
 
         let newBattlefield = battlefield.slice();
-        if (newBattlefield[x][y].isEmpty) {
+        if (newBattlefield[x][y].neighbours === 0) {
           newBattlefield = showNearbyEmptyTiles(x, y, newBattlefield);
           setBattlefield(newBattlefield);
         }
@@ -169,7 +162,6 @@ function Battlefield({ size, numOfBombs, onUpdate, matchNumber }: Props) {
               isRevealed={row[y].isRevealed}
               isMine={cell.isMine}
               neighbours={cell.neighbours}
-              isEmpty={cell.isEmpty}
               onClick={handleClick}
               isFlagged={cell.isFlagged}
             />
