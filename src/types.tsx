@@ -4,7 +4,6 @@ export type Cell = {
   isMine: boolean;
   neighbours: number;
   isRevealed: boolean;
-  isEmpty: boolean;
   isFlagged: boolean;
   onClick?: any;
 };

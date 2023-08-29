@@ -5,7 +5,6 @@ const Tile = ({
   isMine,
   neighbours,
   isRevealed,
-  isEmpty,
   isFlagged,
   x,
   y,
