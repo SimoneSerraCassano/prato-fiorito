@@ -8,3 +8,5 @@ export type Cell = {
   isFlagged: boolean;
   onClick?: any;
 };
+
+export type GameResult = "boh" | "vinto" | "perso";

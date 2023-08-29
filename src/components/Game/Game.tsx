@@ -1,16 +1,18 @@
 import React, { useEffect, useState } from "react";
 import Battlefield from "../Battlefield/Battlefield";
 import "../Game/Game.css";
+import { GameResult } from "../../types";
 
 type Props = {};
 
 function Game({}: Props) {
   const [isGameRunning, setIsGameRunning] = useState<boolean>(false);
-  const [gameStatus, setGameStatus] = useState("boh");
   const [timer, setTimer] = useState<number>(0);
-  const [numOfBombs, setNumOfBombs] = useState(10);
   const [matchNumber, setMatchNumber] = useState(1);
 
+  const numOfBombs = 10;
+
+  // Il timer runna se il match è partito
   useEffect(() => {
     if (isGameRunning) {
       const id = setInterval(() => {
@@ -22,23 +24,14 @@ function Game({}: Props) {
     }
   }, [isGameRunning]);
 
-  useEffect(() => {
-    if (gameStatus === "perso") alert("Hai perso");
-    if (gameStatus === "vinto") alert("Hai vinto!");
-  }, [gameStatus]);
-  // const toggleTimer = () => {
-  //   setIsGameRunning(!isGameStarted);
-  // };
-
-  const checkMatchStatus = (
-    isRunning: boolean,
-    result: "boh" | "vinto" | "perso",
-    remainingBombs: number
-  ) => {
+  // Resto aggiornato sull'esito del match
+  const checkMatchStatus = (isRunning: boolean, result: GameResult) => {
     setIsGameRunning(isRunning);
-    setGameStatus(result);
+    if (result === "perso") alert("Hai perso");
+    if (result === "vinto") alert("Hai vinto!");
   };
 
+  // Reset del match (il matchNumber è o'cess però al momento non saprei in che altro modo passare a un nuovo match)
   const resetMatch = () => {
     setMatchNumber((prev) => prev + 1);
     setTimer(0);
