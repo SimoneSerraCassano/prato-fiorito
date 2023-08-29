@@ -1,11 +1,15 @@
 export type Cell = {
   x: number;
   y: number;
-  isMine: boolean;
-  neighbours: number;
   isRevealed: boolean;
+  isMine: boolean;
+  nearbyBombs: number;
   isFlagged: boolean;
   onClick?: any;
 };
 
-export type GameResult = "boh" | "vinto" | "perso";
+export enum GameStatus {
+  inGioco,
+  vinto,
+  perso,
+}

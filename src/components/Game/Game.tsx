@@ -1,7 +1,7 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import Battlefield from "../Battlefield/Battlefield";
 import "../Game/Game.css";
-import { GameResult } from "../../types";
+import { GameStatus } from "../../types";
 
 type Props = {};
 
@@ -25,10 +25,10 @@ function Game({}: Props) {
   }, [isGameRunning]);
 
   // Resto aggiornato sull'esito del match
-  const checkMatchStatus = (isRunning: boolean, result: GameResult) => {
+  const checkMatchStatus = (isRunning: boolean, result: GameStatus) => {
     setIsGameRunning(isRunning);
-    if (result === "perso") alert("Hai perso");
-    if (result === "vinto") alert("Hai vinto!");
+    if (result === GameStatus.perso) alert("Hai perso");
+    if (result === GameStatus.vinto) alert("Hai vinto!");
   };
 
   // Reset del match (il matchNumber è o'cess però al momento non saprei in che altro modo passare a un nuovo match)

@@ -2,16 +2,16 @@ import "./Tile.css";
 import { Cell } from "../../types";
 
 const Tile = ({
-  isMine,
-  neighbours,
-  isRevealed,
-  isFlagged,
   x,
   y,
+  isRevealed,
+  isMine,
+  nearbyBombs,
+  isFlagged,
   onClick,
 }: Cell) => {
   const getColor = () => {
-    switch (neighbours) {
+    switch (nearbyBombs) {
       case 1:
         return "blue";
       case 2:
@@ -31,6 +31,14 @@ const Tile = ({
     }
   };
 
+  const flaggedStyle = { display: isFlagged ? "block" : "none" };
+  const revealedStyle = {
+    display: isRevealed ? "block" : "none",
+    color: getColor(),
+  };
+
+  const revealedContent = isMine ? "💣" : nearbyBombs > 0 ? nearbyBombs : null;
+
   return (
     <div
       className={"Tile " + (isRevealed ? "clicked" : "light-on-top")}
@@ -38,14 +46,10 @@ const Tile = ({
       onContextMenu={(e) => onClick(x, y, e)}
     >
       {/* Se ho flaggato */}
-      <div style={{ display: isFlagged ? "block" : "none" }}>🚩</div>
+      <div style={flaggedStyle}>🚩</div>
 
       {/* Se ho cliccato */}
-      <div
-        style={{ display: isRevealed ? "block" : "none", color: getColor() }}
-      >
-        {isMine ? "💣" : neighbours > 0 ? neighbours : null}
-      </div>
+      <div style={revealedStyle}>{revealedContent}</div>
     </div>
   );
 };

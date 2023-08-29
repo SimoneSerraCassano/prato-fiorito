@@ -1,8 +1,8 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import Tile from "../Tile/Tile";
 import "./Battlefield.css";
 import { getCellsLeft, getRandomNumber, nearTiles } from "../../utils";
-import { Cell } from "../../types";
+import { Cell, GameStatus } from "../../types";
 
 type Props = {
   size: number;
@@ -31,7 +31,7 @@ function Battlefield({ size, numOfBombs, onUpdate, matchNumber }: Props) {
           x: i,
           y: j,
           isMine: false,
-          neighbours: 0,
+          nearbyBombs: 0,
           isRevealed: false,
           isFlagged: false,
         };
@@ -55,7 +55,7 @@ function Battlefield({ size, numOfBombs, onUpdate, matchNumber }: Props) {
 
         const neighbours = getNeighbours(row, col, newBattlefield);
         for (let i = 0; i < neighbours.length; i++) {
-          newBattlefield[neighbours[i].x][neighbours[i].y].neighbours++;
+          newBattlefield[neighbours[i].x][neighbours[i].y].nearbyBombs++;
         }
       }
     }
@@ -86,10 +86,10 @@ function Battlefield({ size, numOfBombs, onUpdate, matchNumber }: Props) {
       if (
         !vicino.isFlagged &&
         !vicino.isRevealed &&
-        (vicino.neighbours === 0 || !vicino.isMine)
+        (vicino.nearbyBombs === 0 || !vicino.isMine)
       ) {
         newBattlefield[vicino.x][vicino.y].isRevealed = true;
-        if (vicino.neighbours === 0) {
+        if (vicino.nearbyBombs === 0) {
           showNearbyEmptyTiles(vicino.x, vicino.y, prevBattlefield);
         }
       }
@@ -100,36 +100,35 @@ function Battlefield({ size, numOfBombs, onUpdate, matchNumber }: Props) {
   // La funzione del Click. Se la cella non è visibile, la rendo visibile. Se è una bomba, hai perso.
   // Se è una cella vuota (0 bombe attorno), mostro i vicini
   const handleClick = (x: number, y: number, e: any) => {
-    onUpdate(true, "boh");
-
+    onUpdate(true, GameStatus.inGioco);
     e.preventDefault();
+    // Se è revealed non procedo
+    if (battlefield[x][y].isRevealed === true) return;
 
-    if (battlefield[x][y].isRevealed === false) {
-      if (e.type === "click" && battlefield[x][y].isFlagged === false) {
-        revealTile(x, y);
+    // Clic col tatso sinistro, verifico le varie condizioni
+    if (e.type === "click" && battlefield[x][y].isFlagged === false) {
+      revealTile(x, y);
 
-        let newBattlefield = battlefield.slice();
-        if (newBattlefield[x][y].neighbours === 0) {
-          newBattlefield = showNearbyEmptyTiles(x, y, newBattlefield);
-          setBattlefield(newBattlefield);
-        }
+      let newBattlefield = battlefield.slice();
 
-        if (newBattlefield[x][y].isMine) {
-          revealBattlefield(newBattlefield);
-          onUpdate(false, "perso");
-        }
-
-        if (getCellsLeft(newBattlefield).length === numOfBombs) {
-          revealBattlefield(newBattlefield);
-          onUpdate(false, "vinto");
-        }
-      } else {
-        if (e.type === "contextmenu") {
-          let newBattlefield = battlefield.slice();
-          newBattlefield[x][y].isFlagged = !newBattlefield[x][y].isFlagged;
-          setBattlefield(newBattlefield);
-        }
+      // Se non ci sono più celle rimanenti, ho vinto
+      if (getCellsLeft(newBattlefield).length === numOfBombs) {
+        revealBattlefield(newBattlefield);
+        onUpdate(false, GameStatus.vinto);
+        // Se ho preso una mina, ho perso
+      } else if (newBattlefield[x][y].isMine) {
+        revealBattlefield(newBattlefield);
+        onUpdate(false, GameStatus.perso);
+        // Propago lo showNearbyEmptyTiles se la tile cliccata è vuota
+      } else if (newBattlefield[x][y].nearbyBombs === 0) {
+        newBattlefield = showNearbyEmptyTiles(x, y, newBattlefield);
+        setBattlefield(newBattlefield);
       }
+      // Clic col tsto destro, metto la bandierina
+    } else if (e.type === "contextmenu") {
+      let newBattlefield = battlefield.slice();
+      newBattlefield[x][y].isFlagged = !newBattlefield[x][y].isFlagged;
+      setBattlefield(newBattlefield);
     }
   };
 
@@ -161,9 +160,9 @@ function Battlefield({ size, numOfBombs, onUpdate, matchNumber }: Props) {
               y={cell.y}
               isRevealed={row[y].isRevealed}
               isMine={cell.isMine}
-              neighbours={cell.neighbours}
-              onClick={handleClick}
+              nearbyBombs={cell.nearbyBombs}
               isFlagged={cell.isFlagged}
+              onClick={handleClick}
             />
           ))}
         </div>
