@@ -1,0 +1,17 @@
+.Tile {
+  background-color: lightgray;
+  font-size: 16px;
+  font-weight: 700;
+  font-family: "Press Start 2P";
+  width: 40px;
+  height: 40px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.clicked {
+  background-color: rgb(203, 203, 203);
+  border: solid 2px rgb(168, 168, 168);
+}

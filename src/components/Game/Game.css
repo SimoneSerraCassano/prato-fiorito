@@ -1,0 +1,32 @@
+.Board {
+  width: auto;
+  margin: 20px;
+  padding: 10px;
+}
+
+.Settings {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+  padding: 5px;
+}
+
+.Display {
+  display: flex;
+  height: 30px;
+  width: 60px;
+  background-color: black;
+  color: red;
+  font-size: 20px;
+  line-height: 30px;
+}
+
+.text-settings {
+  text-align: center;
+  width: 100%;
+  font-family: "Press Start 2P";
+}
+
+.button {
+  background-color: lightgray;
+}

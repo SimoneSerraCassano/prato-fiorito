@@ -1,0 +1,11 @@
+.Battlefield {
+  border: solid 2px #9b9b9b;
+}
+
+.row {
+  display: flex;
+  flex-direction: row;
+  width: 100%;
+  justify-content: center;
+  align-items: center;
+}
