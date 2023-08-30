@@ -7,6 +7,7 @@ function Game({}) {
   const [isGameRunning, setIsGameRunning] = useState<boolean>(false);
   const [timer, setTimer] = useState<number>(0);
   const [matchNumber, setMatchNumber] = useState(1);
+  const [emoji, setEmoji] = useState("😊");
 
   const numOfBombs = 10;
 
@@ -25,12 +26,23 @@ function Game({}) {
   // Resto aggiornato sull'esito del match
   const checkMatchStatus = (isRunning: boolean, result: GameStatus) => {
     setIsGameRunning(isRunning);
-    if (result === GameStatus.perso) alert("Hai perso");
-    if (result === GameStatus.vinto) alert("Hai vinto!");
+    if (result === GameStatus.perso) {
+      setEmoji("🤯");
+      setTimeout(function () {
+        alert("Hai perso");
+      }, 200);
+    }
+    if (result === GameStatus.vinto) {
+      setEmoji("😎");
+      setTimeout(function () {
+        alert("Hai vinto!");
+      }, 200);
+    }
   };
 
   // Reset del match (il matchNumber è o'cess però al momento non saprei in che altro modo passare a un nuovo match)
   const resetMatch = () => {
+    setEmoji("😊");
     setMatchNumber((prev) => prev + 1);
     setTimer(0);
     setIsGameRunning(false);
@@ -43,7 +55,7 @@ function Game({}) {
           <div className="Seconds text-settings">{timer}</div>
         </div>
         <button className="button light-on-top" onClick={resetMatch}>
-          😊
+          {emoji}
         </button>
         <div className="Display">
           <div className="Bombs text-settings">{numOfBombs}</div>
