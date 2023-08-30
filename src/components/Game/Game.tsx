@@ -3,9 +3,7 @@ import Battlefield from "../Battlefield/Battlefield";
 import "../Game/Game.css";
 import { GameStatus } from "../../types";
 
-type Props = {};
-
-function Game({}: Props) {
+function Game({}) {
   const [isGameRunning, setIsGameRunning] = useState<boolean>(false);
   const [timer, setTimer] = useState<number>(0);
   const [matchNumber, setMatchNumber] = useState(1);

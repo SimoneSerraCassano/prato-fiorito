@@ -102,33 +102,36 @@ function Battlefield({ size, numOfBombs, onUpdate, matchNumber }: Props) {
   const handleClick = (x: number, y: number, e: any) => {
     onUpdate(true, GameStatus.inGioco);
     e.preventDefault();
-    // Se è revealed non procedo
-    if (battlefield[x][y].isRevealed === true) return;
 
-    // Clic col tatso sinistro, verifico le varie condizioni
-    if (e.type === "click" && battlefield[x][y].isFlagged === false) {
-      revealTile(x, y);
+    if (battlefield[x][y].isRevealed === false) {
+      if (e.type === "click" && battlefield[x][y].isFlagged === false) {
+        revealTile(x, y);
 
-      let newBattlefield = battlefield.slice();
+        let newBattlefield = battlefield.slice();
 
-      // Se non ci sono più celle rimanenti, ho vinto
-      if (getCellsLeft(newBattlefield).length === numOfBombs) {
-        revealBattlefield(newBattlefield);
-        onUpdate(false, GameStatus.vinto);
-        // Se ho preso una mina, ho perso
-      } else if (newBattlefield[x][y].isMine) {
-        revealBattlefield(newBattlefield);
-        onUpdate(false, GameStatus.perso);
         // Propago lo showNearbyEmptyTiles se la tile cliccata è vuota
-      } else if (newBattlefield[x][y].nearbyBombs === 0) {
-        newBattlefield = showNearbyEmptyTiles(x, y, newBattlefield);
+        if (newBattlefield[x][y].nearbyBombs === 0) {
+          newBattlefield = showNearbyEmptyTiles(x, y, newBattlefield);
+          setBattlefield(newBattlefield);
+        }
+
+        // Se ho preso una mina, ho perso
+        if (newBattlefield[x][y].isMine) {
+          revealBattlefield(newBattlefield);
+          onUpdate(false, GameStatus.perso);
+        }
+
+        // Se non ci sono più celle rimanenti, ho vinto
+        if (getCellsLeft(newBattlefield).length === numOfBombs) {
+          revealBattlefield(newBattlefield);
+          onUpdate(false, GameStatus.vinto);
+        }
+        // Clic col tasto destro, metto la bandierina
+      } else if (e.type === "contextmenu") {
+        let newBattlefield = battlefield.slice();
+        newBattlefield[x][y].isFlagged = !newBattlefield[x][y].isFlagged;
         setBattlefield(newBattlefield);
       }
-      // Clic col tsto destro, metto la bandierina
-    } else if (e.type === "contextmenu") {
-      let newBattlefield = battlefield.slice();
-      newBattlefield[x][y].isFlagged = !newBattlefield[x][y].isFlagged;
-      setBattlefield(newBattlefield);
     }
   };
 
